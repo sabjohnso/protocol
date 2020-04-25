@@ -1,0 +1,42 @@
+#+TITLE: Notes
+
+#+BEGIN_SRC scheme
+
+  (define functor
+    (protocol ([m : (-> type type)])
+       (declare map/f  ([a : type] [b : type])
+           (-> (-> a b) (m a) (m b)))))
+
+  (define applicative
+    (protocol functor ([m : (-> type type)])
+       (declare return ([a : type])
+          (-> a (m a)))
+       (declare map/a  ([a : type] [b : type])
+                (-> (m (-> a b)) (m a) (m b)))))
+  (declare (identity a)
+     (-> a a))
+
+  (define monad
+    (protocol (applicative m)
+
+      (define (map/f f mx)
+        (map/m (compose return f) mx))
+
+      (define (map/a mf mx)
+        (map/m (λ (f) (map/f f mx)) mf))
+
+      (declare (join a)
+        (-> (m (m a)) (m a)))
+
+      (define (join mmx)
+        (map/m identity mmx))
+    
+      (declare (map/m [a : type] [b : type])
+        (-> (-> a (m b)) (m a) (m b)))
+
+      (define (map/m f mx)
+        (join (fmap f mx)))))
+
+    ()
+#+END_SRC
+

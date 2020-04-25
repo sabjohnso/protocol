@@ -1,8 +1,8 @@
 #lang info
-(define collection "type-class")
+(define collection "protocol")
 (define deps '("base"))
 (define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
-(define scribblings '(("scribblings/type-class.scrbl" ())))
-(define pkg-desc "Description Here")
-(define version "0.0")
+(define scribblings '(("scribblings/protocol.scrbl" ())))
+(define pkg-desc "A System of Protocols Racket")
+(define version "0.1.0")
 (define pkg-authors '(sbj))
