@@ -6,6 +6,10 @@
 
 (provide (all-defined-out))
 
+(define Callable<%>
+  (interface* ()
+      ([prop:procedure (λ (this arg) (send this call arg))])
+    [call (->m any/c any/c)]))
 
 (define Context<%>
   (interface ()
@@ -76,3 +80,19 @@
 
 
 
+(define Show<%>
+  (interface ()
+    [show (output-port? . ->m . void?)]))
+
+(define derive-printable
+  (mixin (Show<%>) (printable<%>)
+    (super-new)
+    (inherit show)
+    (define/public (custom-display out) (show out))
+    (define/public (custom-write out) (show out))
+    (define/public (custom-print out mode) (show out))))
+
+(define abstract-show
+  (mixin () (Show<%>)
+    (super-new)
+    (abstract show)))

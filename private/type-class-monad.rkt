@@ -59,6 +59,7 @@
   ((compose derive-map/m derive-map/a)
    (class MonadReader%
      (super-new)
+     (define/public (get-class) this%)
      (define/override (in-context? x) (contextual? x))
      (define/override (input? x) (is-a? Context<%>))
      (define/override (map/f f mx) (contextual-map/f f mx))

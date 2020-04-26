@@ -3,15 +3,19 @@
 (require
  (for-syntax racket/base racket/syntax syntax/parse)
  racket/class
- "utility.rkt" "type-class-monad.rkt" "functor.rkt" "applicative.rkt")
+ "utility.rkt" "interfaces.rkt" "base-classes.rkt"
+ "type-class-monad.rkt" "functor.rkt" "applicative.rkt")
 
-(provide MonadClass% monad join map/m let/m begin/m)
+(provide MonadClass% monad join map/m let/m begin/m >=> <=< >>=)
 
 (define MonadClass%
   (class ApplicativeClass%
     (super-new)
     (inherit asks)
 
+    (define/override (instance-interface) Monad<%>)
+    (define/override (instance-base) Monad%)
+    
     (define/public (ask-join)
       (asks (λ (ctx) (λ (mmx) (send ctx join mmx)))))
 
@@ -32,7 +36,9 @@
   (let/tc ([ctx ask/tc]
            [map/m get-map/m]
            [mx (injest~ cmx)])
-    (return/tc (map/m (λ (x) (run ctx (injest~ (f x)))) mx))))
+    (return/tc
+      (map/m (λ (x) (run ctx (injest~ (f x))))             
+             mx))))
 
 
 (define-syntax begin/m
@@ -49,6 +55,18 @@
    
    [(_ ([x:id mx:expr] more-bindings:expr ...+) es:expr ...+)
     #'(let/m ([x mx]) (let/m (more-bindings ...) es ...))]))
+
+(define (>=> . fs)
+  (define (aux fs accum)
+    (if (null? fs) accum
+      (aux (cdr fs) (λ (x) (map/m accum ((car fs) x))))))
+  (aux fs return))
+
+(define (<=< . fs)
+  (apply >=> (reverse fs)))
+
+(define (>>= mx f)
+  (map/m f mx))
 
 (module+ test
   (require

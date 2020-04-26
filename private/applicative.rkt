@@ -2,7 +2,8 @@
 
 (require
  racket/class
- "utility.rkt" "type-class-monad.rkt" "base-classes.rkt" "functor.rkt")
+ "utility.rkt"  "base-classes.rkt" "interfaces.rkt"
+ "type-class-monad.rkt" "functor.rkt")
 
 (provide
  ApplicativeClass% applicative return map/a)
@@ -11,7 +12,10 @@
   (class FunctorClass%
     (super-new)
     (inherit asks)
-    
+
+    (define/override (instance-interface) Applicative<%>)
+    (define/override (instance-base) Applicative%)
+
     (define/public (ask-return)
       (asks (λ (ctx) (λ (x) (send ctx return x)))))
     

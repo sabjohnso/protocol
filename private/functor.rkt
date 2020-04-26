@@ -2,7 +2,7 @@
 
 (require
  racket/class
-
+ "interfaces.rkt"
  "type-class-monad.rkt"
  "base-classes.rkt")
 
@@ -13,6 +13,10 @@
   (class TypeClass%
     (super-new)
     (inherit asks)
+
+    (define/public (instance-interface) Functor<%>)
+    (define/public (instance-base) Functor%)
+    
     (define/public (ask-map/f)
       (asks (λ (ctx) (λ (f mx) (send ctx map/f f mx)))))))
 

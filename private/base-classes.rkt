@@ -8,21 +8,26 @@
 (provide (all-defined-out))
 
 (define Context%
-  (class* object%
-      (Context<%>)
+  (class* ((compose derive-printable abstract-show) object%)
+      (Context<%> Callable<%>)
     (super-new)
+    (define/override (show out) (display '<Context%> out))
+    (define/public (call f)
+      (f this))
     (abstract in-context?)))
 
 (define Functor%
   (class* Context%
       (Functor<%>)
     (super-new)
+    (define/override (show out) (display '<Functor%> out))
     (abstract map/f)))
 
 (define Applicative%
   (class* Functor%
       (Applicative<%>)
     (super-new)
+    (define/override (show out) (display '<Applicative%> out))
     (abstract return)
     (abstract map/a)))
 
@@ -30,6 +35,7 @@
   (class* Applicative%
       (Monad<%>)
     (super-new)
+    (define/override (show out) (display '<Monad%> out))
     (abstract join)
     (abstract map/m)))
 
@@ -39,6 +45,7 @@
       (MonadReader<%>)
     (super-new)
     (inherit map/f)
+    (define/override (show out) (display '<MonadReader%> out))
     (abstract input?)
     (abstract ask)
     (abstract local)

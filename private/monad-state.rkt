@@ -5,12 +5,16 @@
  "utility.rkt" "interfaces.rkt" "base-classes.rkt"
  "type-class-monad.rkt" "monad.rkt" "functor.rkt" "applicative.rkt" )
 
+(provide monad-state get select put modify)
+
 (define MonadStateClass%
   (class MonadClass%
     (super-new)
     (inherit asks)
 
-    (define/public (instance-interface)
+    (define/public (class-of) this%)
+
+    (define/override (instance-interface)
       (interface (Monad<%> ExecutableContext<%>)
         [get
          (([this context/c])
@@ -31,11 +35,12 @@
            [f (this) ((input/c this) . -> . (input/c this))])
           . ->i . [result (this) (in-context/c this)])]))
 
-    (define/public (instance-base)
+    (define/override (instance-base)
       (class* Monad%
           ((instance-interface))
         (super-new)        
         (inherit map/f map/m)
+        (define/override (show out) (display '<MonadState%> out))
         (abstract input?)
         (abstract get)
         (define/public (select f)
