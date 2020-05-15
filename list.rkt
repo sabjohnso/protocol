@@ -64,6 +64,33 @@
    (run list-monad (</> '(1 2) '(3 4) '(5 6)))
    '(1 2 3 4 5 6))
 
+  (check-equal?
+   (list-monad
+    ('(1 2 3 4) . >>= . list))
+   '(1 2 3 4))
+
+  (check-equal?
+   (list-monad ('(1 2) . >>= . (λ (x) (list x x))))
+   '(1 1 2 2))
 
 
-  )
+  (check-equal?
+   (list-monad
+    (( list list (λ (x) (list x x)) (λ (x) (list x x)) . >=> . list)
+     1))
+   '(1 1 1 1))
+
+  (let* ([dup (λ (x) (list x x))]
+         [f (dup . >=> . list)]
+         [g (list . >=> . dup)])
+    (check-equal? (list-monad (f 'x)) (list-monad (g 'x))))
+
+
+  (let* ([f (λ (x) (list x x))]
+         [g (λ (x) (list (add1 x)))]
+         [h (λ (x) (list (format "~A" x)))])
+    
+    (check-equal?
+     (list-monad (((f . >=> . g) . >=> . h) 3))
+     (list-monad ((f . >=> . (g . >=> . h)) 3)))))
+

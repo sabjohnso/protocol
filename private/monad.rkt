@@ -56,14 +56,14 @@
    [(_ ([x:id mx:expr] more-bindings:expr ...+) es:expr ...+)
     #'(let/m ([x mx]) (let/m (more-bindings ...) es ...))]))
 
-(define (>=> . fs)
+(define (<=< . fs)
   (define (aux fs accum)
     (if (null? fs) accum
       (aux (cdr fs) (λ (x) (map/m accum ((car fs) x))))))
   (aux fs return))
 
-(define (<=< . fs)
-  (apply >=> (reverse fs)))
+(define (>=> . fs)
+  (apply <=< (reverse fs)))
 
 (define (>>= mx f)
   (map/m f mx))

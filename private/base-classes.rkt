@@ -3,7 +3,7 @@
 (require
  racket/contract/base racket/class
  (only-in racket/function identity)
- "interfaces.rkt")
+ "utility.rkt" "interfaces.rkt")
 
 (provide (all-defined-out))
 
@@ -13,7 +13,7 @@
     (super-new)
     (define/override (show out) (display '<Context%> out))
     (define/public (call f)
-      (f this))
+      (run this f))
     (abstract in-context?)))
 
 (define Functor%
@@ -42,7 +42,7 @@
 
 (define MonadReader%
   (class* Monad%
-      (MonadReader<%>)
+      (MonadReader<%> ExecutableContext<%>)
     (super-new)
     (inherit map/f)
     (define/override (show out) (display '<MonadReader%> out))

@@ -1,10 +1,10 @@
 #lang racket/base
 
-(require racket/contract/base racket/class racket/generic)
+(require
+ racket/contract/base racket/class racket/generic)
 
 (provide
- run
- gen:runnable
+ run gen:runnable
  (contract-out
   [predicate-method/c contract?]))
 
@@ -24,6 +24,7 @@
   #:methods gen:runnable
   ((define (run x this)
      (constantly-value this))))
+
 
 
 

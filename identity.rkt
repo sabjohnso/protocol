@@ -6,7 +6,7 @@
 
 (define identity-monad
   (new (class* ((compose derive-map/f derive-map/a derive-join)
-                        (send monad instance-base))
+                (send monad instance-base))
            ((send monad instance-interface))
          (super-new)
          (define/override (in-context? x) #t)

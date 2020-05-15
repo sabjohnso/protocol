@@ -29,3 +29,35 @@
            (stateful (λ (s) (cons s s))))
          (define/override (put s)
            (stateful (λ (_) (cons (void) s)))))))
+
+(define (state-exec s mx)
+  (car (run s mx)))
+
+(define (state-eval s mx)
+  (cdr (run s mx)))
+
+(module+ test
+  (require rackunit)
+
+  (check-equal?
+   (run 's (state-monad (return 'x)))
+   '(x . s))
+
+  (letrec ([update (λ (x s)
+                     (match (cons x s)
+                       [(cons 'on  `(,score . off)) `(,score . on)]
+                       [(cons'off `(,score . on))  `(,score . off)]
+                       [(cons 1    `(,score . on))  `(,(add1 score) . on)]
+                       [(cons -1   `(,score . on))  `(,(sub1 score) . on)]
+                       [(cons _ s) s]))]
+           [game (match-lambda
+                   ['() get]
+                   [(cons x xs) (let/m ([s get])
+                                  (put (update x s))
+                                  (game xs))])]
+           [empty-state '(0 . off)])
+    (check-equal?
+     (state-exec empty-state (state-monad (game '(on 1 1 -1 -1 1 1 off))))
+     '(2 . off))))
+
+

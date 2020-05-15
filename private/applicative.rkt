@@ -6,7 +6,7 @@
  "type-class-monad.rkt" "functor.rkt")
 
 (provide
- ApplicativeClass% applicative return map/a)
+ ApplicativeClass% applicative return map/a return~)
 
 (define ApplicativeClass%
   (class FunctorClass%
@@ -29,7 +29,11 @@
 
 (define (return x)
   (let/tc ([return get-return])
-    (return/tc (return x))))
+          (return/tc (return x))))
+
+(define (return~ x)
+  (if (contextual? x) x
+      (return x)))
 
 (define (map/a cmf cmx)
   (let/tc ([map/a get-map/a]

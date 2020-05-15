@@ -58,3 +58,4 @@
    (run identity-functor
        (map/f (λ (x) (+ x x)) 3))
    6))
+

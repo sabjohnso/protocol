@@ -2,7 +2,8 @@
 
 (require
  racket/class
- "utility.rkt" "type-class-monad.rkt" "monad.rkt" "functor.rkt" "applicative.rkt")
+ "utility.rkt" "interfaces.rkt" "base-classes.rkt"
+ "type-class-monad.rkt" "monad.rkt" "functor.rkt" "applicative.rkt")
 
 (provide MonadReaderClass% monad-reader ask asks local)
 
@@ -10,6 +11,9 @@
   (class MonadClass%
     (super-new)
     (inherit asks)
+
+    (define/override (instance-base) MonadReader%)
+    (define/override (instance-interface) MonadReader<%>)
     
     (define/public (ask-ask)
       (asks (λ (ctx) (send ctx ask))))

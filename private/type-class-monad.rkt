@@ -6,7 +6,7 @@
  "utility.rkt" "interfaces.rkt" "base-classes.rkt")
 
 (provide
- TypeClass% let/tc ask/tc return/tc injest injest~)
+ TypeClass% let/tc ask/tc asks/tc return/tc injest injest~ contextual?)
 
 (struct contextual
   ()
@@ -66,20 +66,30 @@
      (define/override (return x)  (contextual-return x))
      (define/override (join mmx) (contextual-join mmx))
      (define/override (ask) (contextual-ask))
+     (define/override (asks f) (map/f f (ask)))
      (define/override (local f mx) (contextual-local f mx)))))
 
 
 (define type-class (new TypeClass%))
 
 (define ask/tc (send type-class ask))
+
+(define (map/f/tc f cx)
+  (send type-class map/f f cx))
+
 (define (return/tc x)
   (send type-class return x))
+
+(define (asks/tc f)
+  (map/f/tc f ask/tc))
 
 (define injest return/tc)
 
 (define (injest~ x)
   (if (contextual? x) x
-    (injest x)))
+      (injest x)))
+
+
 
 
 
